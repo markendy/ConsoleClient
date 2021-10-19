@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "RkZlQiocrEySafTkkuiWfB8/PtYbxbDsxXinRFhM78R1mDbEKdJD7mRkekmTMzGeLc955kgnry6UQy0qqbcUuA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Alex\\Documents\\Visual Studio 2019\\Projects\\ConsoleClient\\ConsoleClient\\ConsoleClient.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Alex\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.8\\microsoft.netcore.app.host.win-x64.5.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
