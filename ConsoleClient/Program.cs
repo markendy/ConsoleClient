@@ -1,24 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 
 
 namespace ConsoleClient
 {
     public class Program
-    {
-        private static CommandFactory _commandFactory { get; } = new CommandFactory();
-
-
+    {     
         public static void Main(string[] args)
         {
-            Command? currnetCommand = null;
+            CommandLineHandler.Start();
+        }
+    }
 
-            Console.WriteLine(CommandFactory.MessagesLang.Hello);
+
+    public static class CommandLineHandler
+    {
+        private static Command? _currnetCommand = null;
+
+
+        public static int MaxParamsCount { get; } = 16;
+
+        public static IMessage MessagesLang { get; set; } = EnMessages.GetInstance();
+
+        public static CommandFactory CommandFactory { get; } = new CommandFactory();
+
+
+        public static void Start()
+        {           
+            Console.WriteLine(MessagesLang.Hello);
 
             //load commands from db...
-            _commandFactory.InitDefaultCommands();
-            _commandFactory.AllCommand.Add(new WriteCommand());
+            CommandFactory.InitDefaultCommands();
+            CommandFactory.AllCommand.Add(new WriteCommand());
 
             string line = string.Empty;
 
@@ -27,69 +41,61 @@ namespace ConsoleClient
                 line = Console.ReadLine();
 
                 string[] allLine = line.Split();
-                
-                bool needExit = false;                
+
+                bool needExit = false;
 
                 for (int i = 0; i < allLine.Length && !needExit; ++i)
                 {
                     if (string.IsNullOrEmpty(allLine[0]))
                     {
                         break;
-                    }
+                    }                                       
 
-                    if (currnetCommand is not null)
-                    {
-                        currnetCommand = currnetCommand.ChildCommand.Find(c => c.Title == allLine[i]);
-                    }
-                    else
-                    {
-                        currnetCommand = _commandFactory.AllCommand.Find(c => c.Title == allLine[i]);
-                    }
+                    var currentParamsCount = allLine.Length - i - 1;
+                    
+                    GetByPathCommand(ref _currnetCommand, line, " ");
 
-                    if (currnetCommand is null)
+                    if (_currnetCommand is null)
                     {
-                        Console.WriteLine(CommandFactory.MessagesLang.NotFoundCommand);
+                        Console.WriteLine(MessagesLang.NotFoundCommand);
                         break;
                     }
 
-                    var remainderCount = allLine.Length - i - 1;
-                    
-                    if (remainderCount < currnetCommand.ParamsCount)
+                    if (currentParamsCount < _currnetCommand.ParamsCount)
                     {
-                        Console.WriteLine(CommandFactory.MessagesLang.NullParams);
+                        Console.WriteLine(MessagesLang.NullParams);
                         needExit = true;
                         break;
                     }
 
-                    switch (currnetCommand.CommandType)
+                    switch (_currnetCommand.CommandType)
                     {
                         case CommandType.List:
-                            if (remainderCount == 0)
+                            if (currentParamsCount == 0)
                             {
-                                Console.WriteLine(CommandFactory.MessagesLang.NullParams);
+                                Console.WriteLine(MessagesLang.NullParams);
                                 needExit = true;
                                 break;
                             }
-                            continue;                            
-                        
+                            continue;
+
                         case CommandType.Command:
-                            if (currnetCommand.ParamsCount == 0)
-                                currnetCommand.Execute();
+                            if (_currnetCommand.ParamsCount == 0)
+                                _currnetCommand.Execute();
                             else
                             {
-                                if (remainderCount == 0)
-                                {
-                                    Console.WriteLine(CommandFactory.MessagesLang.NullParams);
+                                if (currentParamsCount == 0)
+                                {                                                                        
+                                    Console.WriteLine(MessagesLang.NullParams);
                                     needExit = true;
-                                    break;
+                                    break;                                    
                                 }
-
-                                else if (remainderCount > currnetCommand.ParamsCount)
-                                {
-                                    Console.WriteLine(CommandFactory.MessagesLang.MoreThenMaxParams +
-                                        " (" + currnetCommand.ParamsCount + ")");
+                                else if (currentParamsCount > _currnetCommand.ParamsCount)
+                                {                                    
+                                    Console.WriteLine(MessagesLang.MoreThenMaxParams +
+                                    " (" + _currnetCommand.ParamsCount + ")");
                                     needExit = true;
-                                    break;
+                                    break;                                    
                                 }
 
                                 string parametrs = string.Empty;
@@ -97,15 +103,90 @@ namespace ConsoleClient
                                 {
                                     parametrs = string.Concat(parametrs, allLine[j]);
                                 }
-                                currnetCommand.Execute((object)"sender", new CustomArgs() { sendString = parametrs });
-                                needExit = true;
+                                _currnetCommand.Execute((object)"sender", new CustomArgs() { SendString = parametrs });                                
                             }
+                            needExit = true;
                             break;
                     }
                 }
                 needExit = false;
-                currnetCommand = null;
+                _currnetCommand = null;
             }
+        }
+
+
+        public static void GetByPathCommand(ref Command currentCommand, string path, string separator = ".")
+        {
+            string[] cmdPath = path.Split(separator);
+
+            Command? rootCommand = null;
+            int cmdPosition = 0;
+
+            for (int i = CommandLineHandler.MaxParamsCount - 1; i >= 0; --i)
+                if (cmdPosition < cmdPath.Length - 1)
+                {
+                    if (rootCommand is null)
+                        rootCommand = CommandFactory.AllCommand.Find(c => c.Title == cmdPath[cmdPosition] && c.ParamsCount == i);
+                    else
+                        break;
+                }
+                else
+                {
+                    rootCommand = CommandFactory.AllCommand.Find(c => c.Title == cmdPath[cmdPosition] && c.ParamsCount == 0);
+                    break;
+                }
+
+            if (rootCommand is null)
+            {
+                return;
+            }
+
+            currentCommand = rootCommand;
+            Command? tempCommand = currentCommand;
+
+            ++cmdPosition;
+            for (int i = CommandLineHandler.MaxParamsCount - 1; i >= 0  && cmdPosition <= cmdPath.Length - 1;)
+            {
+                if (tempCommand.CommandType == CommandType.List)
+                {
+                    currentCommand = tempCommand.ChildCommand.Find(c => c.Title == cmdPath[cmdPosition] && c.ParamsCount == i);
+                    tempCommand = currentCommand ?? tempCommand;
+                }              
+
+                else if (tempCommand.CommandType == CommandType.Command)
+                {
+                    return;
+                }
+
+                --i;
+
+                if (i < 0)
+                {
+                    ++cmdPosition;
+                    if (cmdPosition == cmdPath.Length)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        i = CommandLineHandler.MaxParamsCount - 1;
+                    }
+                }
+            }            
+        }
+
+
+        [Obsolete]
+        public static void GetCurrentCommand(ref Command currnetCommand, int i, string[] allLine, int paramsCount)
+        {
+            if (currnetCommand is null)
+            {
+                currnetCommand = CommandFactory.AllCommand.Find(c => c.Title == allLine[i] && c.ParamsCount == paramsCount);                
+
+                return;
+            }
+
+            currnetCommand = currnetCommand.ChildCommand.Find(c => c.Title == allLine[i] && c.ParamsCount == paramsCount);
         }
     }
 
@@ -113,58 +194,50 @@ namespace ConsoleClient
     public class WriteCommand : Command
     {
         public WriteCommand()
-        {}
-
-        public WriteCommand(string title, Action? action, int paramsCount) : base (title, action, paramsCount)
-        {}
-
-        public WriteCommand(string title, EventHandler<CustomArgs>? eventHandler, int paramsCount, CommandType commandType = default) 
-            : base (title, eventHandler, paramsCount, commandType)
-        {}
-
-
-        public override void Init()
         {
-            base.Init();
-
-            Title = "write";
-            ParamsCount = 1;
+            Init(eventHandler: LocalExecute);
         }
 
 
-        public override void Execute(object o, CustomArgs e)
+        protected override void Init(
+            EventHandler<CustomArgs> beforeEventHandler = null, EventHandler<CustomArgs> eventHandler = null, EventHandler<CustomArgs> afterEventHandler = null)
         {
-            ClearExecuteEvents();
-            base.Execute(o, e);      
+            base.Init(beforeEventHandler, eventHandler, afterEventHandler);
 
-            Console.WriteLine($"{e.sendString}");
+            ParamsCount = 1;
+            Title = "write";       
+        }
+
+
+        private void LocalExecute(object o, CustomArgs e)
+        {
+            Console.WriteLine($"{e.SendString}");
         }
     }
 
 
     public class CommandFactory
-    {
-        public static IMessage MessagesLang { get; set; } = EnMessages.GetInstance();
-
+    {        
         public List<Command> AllCommand { get; } = new List<Command>();
 
 
         public void InitDefaultCommands()
         {
             AllCommand.Add(new Command("set_lang", ChangeLangExecuteEventHandler, 1));
-            AllCommand.Add(new Command("clear", ClearExecuteAction , 0));            
-            AllCommand.Add(new Command("exit", ExitExecuteAction, 0));
-            AllCommand.Add(new Command("help", HelpExecuteAction, 0));
+            AllCommand.Add(new Command("clear", ClearExecuteAction));
+            AllCommand.Add(new Command("exit", ExitExecuteAction));
+            AllCommand.Add(new Command("help", HelpExecuteAction));
+            AllCommand.Add(new Command("help", HelpExecuteAction, 1));
 
-            Command get = new Command("get", CommandType.List);
+            Command get = new Command("get");
             {
-                Command time = new Command("time", CommandType.List);
+                Command time = new Command("time");
                 {
-                    time.ChildCommand.Add(new Command("long", GetLongTimeExecuteAction, 0));
-                    time.ChildCommand.Add(new Command("short", GetShortTimeExecuteAction, 0));
+                    time.ChildCommand.Add(new Command("long", GetLongTimeExecuteAction));
+                    time.ChildCommand.Add(new Command("short", GetShortTimeExecuteAction));
                 }
                 get.ChildCommand.Add(time);
-                get.ChildCommand.Add(new Command("date", GetDateExecuteAction, 0));
+                get.ChildCommand.Add(new Command("date", GetDateExecuteAction));
             }
             AllCommand.Add(get);
         }
@@ -196,34 +269,60 @@ namespace ConsoleClient
 
         private void ExitExecuteAction()
         {
-            Console.WriteLine(CommandFactory.MessagesLang.ByeBye);
+            Console.WriteLine(CommandLineHandler.MessagesLang.ByeBye);
             Environment.Exit(0);
         }
 
 
         private void HelpExecuteAction()
         {
-            Console.WriteLine(CommandFactory.MessagesLang.ListCommand);
+            Console.WriteLine(CommandLineHandler.MessagesLang.ListCommand);
 
             foreach (var command in AllCommand)
             {
-                Console.WriteLine(command.Title);
+                Console.WriteLine(command.GetTitleWithCountParams());
             }
+
+            return;
+        }
+
+
+        private void HelpExecuteAction(object o, CustomArgs e)
+        {            
+            Command currentCommand = null;
+
+            CommandLineHandler.GetByPathCommand(ref currentCommand, e.SendString);
+
+            if (currentCommand is not null)
+            {
+                Console.WriteLine($"help for: {currentCommand.GetTitleWithCountParams()}");
+                foreach (var command in currentCommand.ChildCommand)
+                {                    
+                    Console.WriteLine(command.GetTitleWithCountParams());
+                }
+                return;
+            }
+            else
+            {
+                Console.WriteLine(CommandLineHandler.MessagesLang.NotFoundCommand);
+            }
+
+            
         }
 
 
         private void ChangeLangExecuteEventHandler(object o, CustomArgs e)
         {
-            switch (e.sendString)
+            switch (e.SendString)
             {
                 case "ru":
-                    MessagesLang = RuMessages.GetInstance(); 
+                    CommandLineHandler.MessagesLang = RuMessages.GetInstance();
                     break;
                 case "en":
-                    MessagesLang = EnMessages.GetInstance();
+                    CommandLineHandler.MessagesLang = EnMessages.GetInstance();
                     break;
                 default:
-                    Console.WriteLine(CommandFactory.MessagesLang.ErrorParams);
+                    Console.WriteLine(CommandLineHandler.MessagesLang.ErrorParams);
                     break;
             }
         }
@@ -232,7 +331,7 @@ namespace ConsoleClient
 
     public class CustomArgs : EventArgs
     {
-        public string sendString { get; set; }
+        public string SendString { get; set; }
     }
 
 
@@ -264,7 +363,7 @@ namespace ConsoleClient
 
 
         private RuMessages()
-        {}
+        { }
 
 
         public string NullParams { get; } = "параметры команды пусты";
@@ -334,10 +433,16 @@ namespace ConsoleClient
 
 
     public class Command
-    {        
-        private Action _executeAction;
+    {
+        public static int AllCommandCount = 0;
 
+        private Action _executeBeforeAction;
+        private Action _executeAction;
+        private Action _executeAfterAction;
+
+        private EventHandler<CustomArgs> _executeBeforeEventHandler;
         private EventHandler<CustomArgs> _executeEventHandler;
+        private EventHandler<CustomArgs> _executeAfterEventHandler;
 
 
         protected Command()
@@ -345,34 +450,41 @@ namespace ConsoleClient
             Init();
         }
 
-        private Command(string title)
+        public Command(string title)
         {
             Title = title;
-        }
 
-        public Command(string title, CommandType commandType) : this(title)
-        {
-            CommandType = commandType;
+            CommandType = CommandType.List;
 
             Init();
         }
 
-        public Command(string title, Action? action, int paramsCount, CommandType commandType = default) : this(title)
+
+        public Command(string title, Action action, Action beforeAction = null, Action afterAction = null)
         {
-            _executeAction += action;
+            Title = title;            
+
+            ParamsCount = 0;
+            CommandType = CommandType.Command;
+
+            Init(beforeAction, action, afterAction);
+        }
+
+
+        public Command(string title, EventHandler<CustomArgs> eventHandler, int paramsCount, 
+            EventHandler<CustomArgs> beforeEventHandler = null, EventHandler<CustomArgs> afterEventHandler = null)
+        {
+            Title = title;
+
             ParamsCount = paramsCount;
+            CommandType = CommandType.Command;
 
-            Init();
+            Init(beforeEventHandler, eventHandler, afterEventHandler);
         }
 
-        public Command(string title, EventHandler<CustomArgs>? eventHandler, int paramsCount, CommandType commandType = default) : this(title)
-        {
-            _executeEventHandler += eventHandler;
-            ParamsCount = paramsCount;
 
-            Init();
-        }
-       
+        public int Id { get; private set; }
+
 
         public string Title { get; set; }
 
@@ -383,9 +495,37 @@ namespace ConsoleClient
         public CommandType CommandType { get; set; }
 
 
-        public virtual void Init()
+        protected virtual void Init()
         {
-            
+            InitId();
+        }
+
+
+        protected virtual void Init(Action beforeAction = null, Action action = null, Action afterAction = null)
+        {
+            InitId();
+
+            _executeBeforeAction += beforeAction;
+            _executeAction += action;
+            _executeAfterAction += afterAction;
+        }
+
+
+        protected virtual void Init(
+            EventHandler<CustomArgs> beforeEventHandler = null, EventHandler<CustomArgs> eventHandler = null, EventHandler<CustomArgs> afterEventHandler = null)
+        {
+            InitId();
+
+            _executeBeforeEventHandler += beforeEventHandler;
+            _executeEventHandler += eventHandler;
+            _executeAfterEventHandler += afterEventHandler;
+        }
+
+
+        public void ClearBeforeExecuteEvents()
+        {
+            _executeBeforeAction = null;
+            _executeBeforeAction = null;
         }
 
 
@@ -396,19 +536,52 @@ namespace ConsoleClient
         }
 
 
-        public virtual void BeforeExecute()
+        public void ClearAfterExecuteEvents()
         {
-
+            _executeAfterAction = null;
+            _executeAfterEventHandler = null;
         }
 
 
-        public virtual void Execute()
+        public void ClearAllExecuteEvents()
+        {
+            ClearBeforeExecuteEvents();
+            ClearExecuteEvents();
+            ClearAfterExecuteEvents();
+        }
+
+
+        public string GetTitleWithCountParams()
+        {
+            return Title + $"({ParamsCount})";
+        }
+
+
+        public override string ToString()
+        {
+            return $"help for : {Title}";
+        }
+
+
+        private void InitId()
+        {
+            Id = ++AllCommandCount;
+        }
+
+
+        private void BeforeExecute()
+        {
+            _executeBeforeAction?.Invoke();
+        }
+
+
+        public void Execute()
         {
             BeforeExecute();
-            
+
             if (_executeAction is null)
             {
-                System.Diagnostics.Debug.WriteLine($"NULL ACTION command={Title}-{CommandFactory.MessagesLang.GeneralizedError}");
+                System.Diagnostics.Debug.WriteLine($"NULL ACTION command={Title}-{CommandLineHandler.MessagesLang.GeneralizedError}");
                 return;
             }
 
@@ -418,23 +591,23 @@ namespace ConsoleClient
         }
 
 
-        public virtual void AfterExecute()
+        private void AfterExecute()
         {
-
+            _executeAfterAction?.Invoke();
         }
 
 
-        public virtual void BeforeExecute(object o, CustomArgs e)
+        private void BeforeExecute(object o, CustomArgs e)
         {
-
+            _executeBeforeEventHandler?.Invoke(o, e);
         }
 
 
-        public virtual void Execute(object o, CustomArgs e)
+        public void Execute(object o, CustomArgs e)
         {
-            if (string.IsNullOrEmpty(e.sendString))
+            if (string.IsNullOrEmpty(e.SendString))
             {
-                Console.WriteLine(CommandFactory.MessagesLang.NullParams);
+                Console.WriteLine(CommandLineHandler.MessagesLang.NullParams);
                 return;
             }
 
@@ -443,7 +616,7 @@ namespace ConsoleClient
 
             if (_executeEventHandler is null)
             {
-                System.Diagnostics.Debug.WriteLine($"NULL ACTION command with params={Title}-{CommandFactory.MessagesLang.GeneralizedError}");
+                System.Diagnostics.Debug.WriteLine($"NULL ACTION command with params={Title}-{CommandLineHandler.MessagesLang.GeneralizedError}");
                 return;
             }
             _executeEventHandler?.Invoke(o, e);
@@ -452,10 +625,10 @@ namespace ConsoleClient
         }
 
 
-        public virtual void AfterExecute(object o, CustomArgs e)
+        private void AfterExecute(object o, CustomArgs e)
         {
-
-        }        
+            _executeAfterEventHandler?.Invoke(o, e);
+        }
     }
 
 
