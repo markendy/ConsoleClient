@@ -11,7 +11,7 @@ namespace ConsoleClient
 {
     public static class CommandLineHandler
     {
-        private static Command _currnetCommand = null;
+        private static Command _currentCommand = null;
 
 
         public static int MaxParamsCount { get; } = 16;
@@ -20,7 +20,7 @@ namespace ConsoleClient
 
         public static IMessage MessagesLang { get; set; } = EnMessages.GetInstance();
 
-        public static CommandFactory CommandFactory { get; } = new CommandFactory();
+        public static DefaultCommandFactory CommandFactory { get; } = new DefaultCommandFactory();
 
 
         public static void Start()
@@ -48,11 +48,12 @@ namespace ConsoleClient
                     if (string.IsNullOrEmpty(allLine[0]))
                     {
                         break;
-                    }                   
+                    }
 
-                    int result = GetByPathCommand(ref _currnetCommand, line, " ");//GetByPathCommand(ref _currnetCommand, line, " ");
+                    int result;
+                    (result, _currentCommand) = GetByPathCommand(line, " ");
 
-                    if (_currnetCommand is null)
+                    if (_currentCommand is null)
                     {
                         Console.WriteLine(MessagesLang.NotFoundCommand);
                         break;
@@ -65,20 +66,20 @@ namespace ConsoleClient
                         break;
                     }
 
-                    switch (_currnetCommand.CommandType)
+                    switch (_currentCommand.CommandType)
                     {
                         case CommandType.List:                            
                             continue;
 
                         case CommandType.Command:
-                            if (_currnetCommand.ParamsCount == 0)
-                                _currnetCommand.Execute();
+                            if (_currentCommand.ParamsCount == 0)
+                                _currentCommand.Execute();
                             else
                             {                                
                                 if (result > 0)
                                 {
                                     Console.WriteLine(MessagesLang.MoreThenMaxParams +
-                                    " (" + _currnetCommand.ParamsCount + ")");
+                                    " (" + _currentCommand.ParamsCount + ")");
                                     needExit = true;
                                     break;
                                 }
@@ -88,20 +89,22 @@ namespace ConsoleClient
                                 {
                                     parametrs = string.Concat(parametrs, allLine[j]);
                                 }
-                                _currnetCommand.Execute((object)"sender", new CustomArgs() { SendString = parametrs });
+                                _currentCommand.Execute((object)"sender", new CustomArgs() { SendString = parametrs });
                             }
                             needExit = true;
                             break;
                     }
                 }
                 needExit = false;
-                _currnetCommand = null;
+                _currentCommand = null;
             }
         }
 
 
-        public static int GetByPathCommand(ref Command currentCommand, string path, string separator = ".", Command rootCommand = null, int cmdPosition = 0)
+        public static (int, Command) GetByPathCommand(string path, string separator = ".", Command rootCommand = null, int cmdPosition = 0)
         {
+            Command currentCommand = null;
+
             int resultStatus = -1;
 
             string[] cmdPath = path.Split(separator);
@@ -145,18 +148,18 @@ namespace ConsoleClient
                 }
             }
 
-            _currnetCommand = rootCommand;
+            currentCommand = rootCommand;
 
-            if (_currnetCommand is null)
-                return resultStatus;
+            if (currentCommand is null)
+                return (resultStatus, currentCommand);
 
             if (!isLastCommand)
             {
-                if (_currnetCommand.CommandType == CommandType.List)                    
-                    resultStatus = GetByPathCommand(ref currentCommand, path, separator, rootCommand, ++cmdPosition);
+                if (currentCommand.CommandType == CommandType.List)                    
+                    (resultStatus, currentCommand) = GetByPathCommand(path, separator, rootCommand, ++cmdPosition);
             }
 
-            if (_currnetCommand?.CommandType is CommandType.Command)
+            if (currentCommand?.CommandType is CommandType.Command)
             {
                 if (rootCommand.ParamsCount == currentParamsCount)
                     resultStatus = 0;
@@ -164,7 +167,7 @@ namespace ConsoleClient
                     resultStatus = 1;
             }
 
-            return resultStatus;
+            return (resultStatus, currentCommand);
         }
            
     
