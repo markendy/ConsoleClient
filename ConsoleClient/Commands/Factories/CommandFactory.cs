@@ -47,7 +47,7 @@ namespace ConsoleClient.Commands.Factories
 
         private void GetShortTimeExecuteAction()
         {
-            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss"));
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss"));
         }
 
 
@@ -81,7 +81,7 @@ namespace ConsoleClient.Commands.Factories
         {
             Command currentCommand = null;
 
-            CommandLineHandler.GetByPathCommand(ref currentCommand, e.SendString);
+            (_, currentCommand) = CommandLineHandler.GetByPathCommand(e.SendString);
 
             if (currentCommand is not null)
             {
@@ -92,10 +92,8 @@ namespace ConsoleClient.Commands.Factories
                 }
                 return;
             }
-            else
-            {
-                Console.WriteLine(CommandLineHandler.MessagesLang.NotFoundCommand);
-            }
+        
+            Console.WriteLine(CommandLineHandler.MessagesLang.NotFoundCommand);            
         }
 
 
