@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ConsoleClient.Commands.Factories
 {
-    public class CommandFactory
+    public class DefaultCommandFactory
     {
         public List<Command> AllCommand { get; } = new List<Command>();
 
@@ -16,6 +16,7 @@ namespace ConsoleClient.Commands.Factories
             AllCommand.Add(new Command("set_lang", ChangeLangExecuteEventHandler, 1));
             AllCommand.Add(new Command("clear", ClearExecuteAction));
             AllCommand.Add(new Command("exit", ExitExecuteAction));
+            AllCommand.Add(new Command("version", GetVersionExecuteAction));
             AllCommand.Add(new Command("help", HelpExecuteAction));
             AllCommand.Add(new Command("help", HelpExecuteAction, 1));
 
@@ -36,6 +37,12 @@ namespace ConsoleClient.Commands.Factories
         private void ClearExecuteAction()
         {
             Console.Clear();
+        }
+
+
+        private void GetVersionExecuteAction()
+        {
+            Console.WriteLine($"Version: {CommandLineHandler.Version}");
         }
 
 

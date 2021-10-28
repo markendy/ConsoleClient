@@ -16,6 +16,8 @@ namespace ConsoleClient
 
         public static int MaxParamsCount { get; } = 16;
 
+        public static string Version { get; } = "v1.2";
+
         public static IMessage MessagesLang { get; set; } = EnMessages.GetInstance();
 
         public static CommandFactory CommandFactory { get; } = new CommandFactory();
