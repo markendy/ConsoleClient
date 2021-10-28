@@ -46,11 +46,9 @@ namespace ConsoleClient
                     if (string.IsNullOrEmpty(allLine[0]))
                     {
                         break;
-                    }
+                    }                   
 
-                    var currentParamsCount = allLine.Length - i - 1;
-
-                    GetByPathCommandV2(ref _currnetCommand, line, " ");//GetByPathCommand(ref _currnetCommand, line, " ");
+                    int result = GetByPathCommand(ref _currnetCommand, line, " ");//GetByPathCommand(ref _currnetCommand, line, " ");
 
                     if (_currnetCommand is null)
                     {
@@ -58,7 +56,7 @@ namespace ConsoleClient
                         break;
                     }
 
-                    if (currentParamsCount < _currnetCommand.ParamsCount)
+                    if (result < 0)
                     {
                         Console.WriteLine(MessagesLang.NullParams);
                         needExit = true;
@@ -67,27 +65,15 @@ namespace ConsoleClient
 
                     switch (_currnetCommand.CommandType)
                     {
-                        case CommandType.List:
-                            if (currentParamsCount == 0)
-                            {
-                                Console.WriteLine(MessagesLang.NullParams);
-                                needExit = true;
-                                break;
-                            }
+                        case CommandType.List:                            
                             continue;
 
                         case CommandType.Command:
                             if (_currnetCommand.ParamsCount == 0)
                                 _currnetCommand.Execute();
                             else
-                            {
-                                if (currentParamsCount == 0)
-                                {
-                                    Console.WriteLine(MessagesLang.NullParams);
-                                    needExit = true;
-                                    break;
-                                }
-                                else if (currentParamsCount > _currnetCommand.ParamsCount)
+                            {                                
+                                if (result > 0)
                                 {
                                     Console.WriteLine(MessagesLang.MoreThenMaxParams +
                                     " (" + _currnetCommand.ParamsCount + ")");
@@ -112,16 +98,16 @@ namespace ConsoleClient
         }
 
 
-        public static string GetByPathCommandV2(ref Command currentCommand, string path, string separator = ".", Command rootCommand = null, int cmdPosition = 0)
+        public static int GetByPathCommand(ref Command currentCommand, string path, string separator = ".", Command rootCommand = null, int cmdPosition = 0)
         {
-            string resultMessage = string.Empty;
+            int resultStatus = -1;
 
             string[] cmdPath = path.Split(separator);
 
             List<Command> listCommand = cmdPosition == 0 ? CommandFactory.AllCommand : rootCommand.ChildCommand;
 
             var currentParamsCount = cmdPath.Length - cmdPosition - 1;
-            bool isLastCommand = cmdPosition <= cmdPath.Length - 1;
+            bool isLastCommand = cmdPosition == cmdPath.Length - 1;
 
             rootCommand = listCommand.Find(c => c.Title == cmdPath[cmdPosition] && c.ParamsCount == currentParamsCount);
 
@@ -140,7 +126,10 @@ namespace ConsoleClient
                         }
 
                         if (equalValue == 0)
+                        {
+                            i = 0;
                             equalValue = CommandLineHandler.MaxParamsCount;
+                        }
 
                         if (i <= equalValue)
                         {
@@ -150,28 +139,34 @@ namespace ConsoleClient
 
                         break;
                     }
-
-                    if (rootCommand.ParamsCount > currentParamsCount)
-                        resultMessage = $"params less then {rootCommand.ParamsCount}";
-                    else if (rootCommand.ParamsCount < currentParamsCount)
-                        resultMessage = $"params more then {rootCommand.ParamsCount}";
-
-                    break;                
+                    break;
                 }
             }
 
             _currnetCommand = rootCommand;
 
+            if (_currnetCommand is null)
+                return resultStatus;
+
             if (!isLastCommand)
             {
-                resultMessage = GetByPathCommandV2(ref currentCommand, path, separator, rootCommand, ++cmdPosition);
+                if (_currnetCommand.CommandType == CommandType.List)                    
+                    resultStatus = GetByPathCommand(ref currentCommand, path, separator, rootCommand, ++cmdPosition);
             }
 
-            return resultMessage;
+            if (_currnetCommand?.CommandType is CommandType.Command)
+            {
+                if (rootCommand.ParamsCount == currentParamsCount)
+                    resultStatus = 0;
+                else if (rootCommand.ParamsCount < currentParamsCount)
+                    resultStatus = 1;
+            }
+
+            return resultStatus;
         }
            
     
-        public static void GetByPathCommand(ref Command currentCommand, string path, string separator = ".")
+        public static void GetByPathCommand_Old(ref Command currentCommand, string path, string separator = ".")
         {
             string[] cmdPath = path.Split(separator);
 
