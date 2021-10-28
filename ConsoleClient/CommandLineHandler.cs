@@ -5,7 +5,7 @@ using ConsoleClient.Primitives;
 using ConsoleClient.Primitives.Enums;
 using ConsoleClient.Primitives.Interfaces;
 using System;
-
+using System.Collections.Generic;
 
 namespace ConsoleClient
 {
@@ -27,7 +27,7 @@ namespace ConsoleClient
 
             //load commands from db...
             CommandFactory.InitDefaultCommands();
-           
+
             CommandFactory.AllCommand.Add(new WriteCommand());
             CommandFactory.AllCommand.Add(new TimeCommand());
 
@@ -50,7 +50,7 @@ namespace ConsoleClient
 
                     var currentParamsCount = allLine.Length - i - 1;
 
-                    GetByPathCommand(ref _currnetCommand, line, " ");
+                    GetByPathCommandV2(ref _currnetCommand, line, " ");//GetByPathCommand(ref _currnetCommand, line, " ");
 
                     if (_currnetCommand is null)
                     {
@@ -112,6 +112,65 @@ namespace ConsoleClient
         }
 
 
+        public static string GetByPathCommandV2(ref Command currentCommand, string path, string separator = ".", Command rootCommand = null, int cmdPosition = 0)
+        {
+            string resultMessage = string.Empty;
+
+            string[] cmdPath = path.Split(separator);
+
+            List<Command> listCommand = cmdPosition == 0 ? CommandFactory.AllCommand : rootCommand.ChildCommand;
+
+            var currentParamsCount = cmdPath.Length - cmdPosition - 1;
+            bool isLastCommand = cmdPosition <= cmdPath.Length - 1;
+
+            rootCommand = listCommand.Find(c => c.Title == cmdPath[cmdPosition] && c.ParamsCount == currentParamsCount);
+
+            if (rootCommand is null)
+            {
+                for (int i = currentParamsCount, equalValue = 0; ;)
+                {
+                    rootCommand = rootCommand ?? listCommand.Find(c => c.Title == cmdPath[cmdPosition] && c.ParamsCount == i);
+
+                    if (rootCommand is null)
+                    {
+                        if (i >= equalValue && equalValue == 0)
+                        {
+                            --i;
+                            continue;
+                        }
+
+                        if (equalValue == 0)
+                            equalValue = CommandLineHandler.MaxParamsCount;
+
+                        if (i <= equalValue)
+                        {
+                            ++i;
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    if (rootCommand.ParamsCount > currentParamsCount)
+                        resultMessage = $"params less then {rootCommand.ParamsCount}";
+                    else if (rootCommand.ParamsCount < currentParamsCount)
+                        resultMessage = $"params more then {rootCommand.ParamsCount}";
+
+                    break;                
+                }
+            }
+
+            _currnetCommand = rootCommand;
+
+            if (!isLastCommand)
+            {
+                resultMessage = GetByPathCommandV2(ref currentCommand, path, separator, rootCommand, ++cmdPosition);
+            }
+
+            return resultMessage;
+        }
+           
+    
         public static void GetByPathCommand(ref Command currentCommand, string path, string separator = ".")
         {
             string[] cmdPath = path.Split(separator);
