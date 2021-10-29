@@ -4,11 +4,13 @@
     {
         public static class GameSettings
         {
-            public static int MaxCardCount = 7;
+            public const int MaxCardCount = 14;
 
-            public static int BaseHP = 100;
+            public const int BaseMaxHP = 100;
+            
+            public const int BaseHP = BaseMaxHP;
 
-            public static int BaseDamage = 25;
+            public const int BaseDamage = 25;
         }        
     }
 }

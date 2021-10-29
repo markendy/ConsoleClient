@@ -1,4 +1,8 @@
-﻿namespace ConsoleClient.CardGame.Scenes
+﻿using ConsoleClient.CardGame.Cards;
+using System;
+
+
+namespace ConsoleClient.CardGame.Scenes
 {
     public class Scene
     {
@@ -10,9 +14,9 @@
         public int Id { get; set; }
 
 
-        public void Start()
+        public virtual void Start(Card[] friendCards, Card[] enemyCards)
         {
-
+            throw new NotImplementedException();
         }
     }
 }
