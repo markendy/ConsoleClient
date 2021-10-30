@@ -42,9 +42,9 @@ namespace ConsoleClient.CardGame.Cards
         {
             CardGameEngine.WriteLog($"___________________________________________\n\tCard {Title} make step\n___________________________________________");
 
+            ExecuteSkills();            
             if (Type == CardType.Warrior)            
                 GiveDamage();
-            ExecuteSkills();            
             // do something...
         }
 

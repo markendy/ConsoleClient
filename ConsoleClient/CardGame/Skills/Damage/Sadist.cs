@@ -29,8 +29,8 @@ namespace ConsoleClient.CardGame.Skills.Damage
                 CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {target.Title} (-{(int)(target.HP * procent)}) ({procent * 100}% of CurrentHP)");
                 
                 var owner = (Owner as Warrior);
-                owner.HP += (int)(target.HP * procent);                
-                CardGameEngine.WriteLog($"and {target.Title} (+{(int)(target.HP * 0.35)}) (35% of CurrentHP enemy)");
+                owner.HP += (int)(target.HP * procent / 2);                
+                CardGameEngine.WriteLog($"and {target.Title} (+{(int)(target.HP * 0.35) / 2}) (17% of CurrentHP enemy)");
             }            
         }
     }

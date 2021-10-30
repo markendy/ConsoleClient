@@ -14,11 +14,11 @@ namespace ConsoleClient.CardGame.Skills.Heals
 
 
         /// <summary>
-        /// Head hero in every step on 13%
+        /// Head hero in every step on 20%
         /// </summary>
         public override void Execute()
         {
-            double procent = 0.13;
+            double procent = 0.2;
             ILiveCard owner = Owner as ILiveCard;
             owner.HP += (int)(owner.MaxHP * procent);
 
