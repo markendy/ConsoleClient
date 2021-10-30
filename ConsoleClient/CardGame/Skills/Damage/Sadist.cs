@@ -26,12 +26,12 @@ namespace ConsoleClient.CardGame.Skills.Damage
                 double procent = 0.35;
                 
                 int addValue = (int)(target.HP * procent);
-                target.HP -= addValue;
                 CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {target.Title} (-{addValue}) ({procent * 100}% of CurrentHP)");
+                target.HP -= addValue;
                 
                 var owner = (Owner as Warrior);                              
-                owner.HP += addValue;                
                 CardGameEngine.WriteLog($"and {owner.Title} (+{addValue}) ({procent * 100}% of CurrentHP enemy)");
+                owner.HP += addValue;                
             }            
         }
     }
