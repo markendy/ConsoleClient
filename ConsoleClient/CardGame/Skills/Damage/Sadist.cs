@@ -1,4 +1,5 @@
 ﻿using ConsoleClient.CardGame.Cards;
+using ConsoleClient.CardGame.Cards.Primitives;
 using ConsoleClient.CardGame.Scenes;
 
 
@@ -18,7 +19,7 @@ namespace ConsoleClient.CardGame.Skills.Damage
         /// </summary>        
         public override void Execute()
         {
-            foreach(Warrior target in (Owner.CurrentScene as Battle).FriendCards)
+            foreach(Warrior target in (Owner.CurrentScene as Battle).GetAllEnemyWarriors(Owner.EnemyTag))
             {
                 if (target is null)
                     continue;
@@ -26,12 +27,12 @@ namespace ConsoleClient.CardGame.Skills.Damage
                 double procent = 0.35;
                 
                 int addValue = (int)(target.HP * procent);
-                CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {target.Title} (-{addValue}) ({procent * 100}% of CurrentHP)");
-                target.HP -= addValue;
+                CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {target.Title} ({target.HP}-{addValue}) ({procent * 100}% of CurrentHP)");
+                target.TakeHP(new HpChangeEventArgs(this, addValue));
                 
                 var owner = (Owner as Warrior);                              
-                CardGameEngine.WriteLog($"and {owner.Title} (+{addValue}) ({procent * 100}% of CurrentHP enemy)");
-                owner.HP += addValue;                
+                CardGameEngine.WriteLog($"and {owner.Title} ({owner.HP}+{addValue}) ({procent * 100}% of CurrentHP enemy)");
+                owner.GiveHP(new HpChangeEventArgs(this, addValue));                
             }            
         }
     }

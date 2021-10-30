@@ -1,26 +1,27 @@
 ﻿using ConsoleClient.CardGame.Cards.Primitives;
 using ConsoleClient.CardGame.Scenes;
-using ConsoleClient.CardGame.Skills.Damage;
+using ConsoleClient.CardGame.Skills.Heals;
 
 
 namespace ConsoleClient.CardGame.Cards.Warriors
 {
-    public class Necromant : Warrior
+    public class Paladin : Warrior
     {
-        public Necromant(Scene scene, int inBoardId, CardTag cardTag) : base(scene, inBoardId, cardTag)
+        public Paladin(Scene scene, int inBoardId, CardTag cardTag) : base (scene, inBoardId, cardTag)
         {
-            MaxHP = 1240;
+            MaxHP = 2200;
             GiveHP(new HpChangeEventArgs(MaxHP));
-            BaseDamage = 275;
-            Title = $"{nameof(Necromant)}";
+            BaseDamage = 150;
+            Title = $"{nameof(Paladin)}";
 
             CardGameEngine.WriteLog($"Card {Title} created with hp:{HP}, dmg: {CurrentDamage}");
         }
 
 
+
         protected override void LoadSkills()
         {
-            Skills[0] =  new Sadist(this);
+            Skills[0] = new HolyHand(this);
         }
     }
 }

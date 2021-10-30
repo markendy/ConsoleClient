@@ -5,12 +5,12 @@ using ConsoleClient.CardGame.Cards.Primitives;
 
 namespace ConsoleClient.CardGame.Skills.Heals
 {
-    public class BloodDragon : BaseSkill
+    public class HolyHand : BaseSkill
     {
-        public BloodDragon(Card owner)
+        public HolyHand(Card owner)
         {
             Owner = owner;
-            Title = nameof(BloodDragon);
+            Title = nameof(HolyHand);
         }
 
 
@@ -19,13 +19,15 @@ namespace ConsoleClient.CardGame.Skills.Heals
         /// </summary>
         public override void Execute()
         {
-            double procent = 0.2;
+            int mainValue = 100;
+            double procent = 0.1;
             ILiveCard owner = Owner as ILiveCard;
             int addValue = (int)(owner.MaxHP * procent);
-            
-            CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {Owner.Title} (+{addValue}) ({procent * 100}% of MaxHP)");
-            
-            owner.GiveHP(new HpChangeEventArgs(this, addValue));
+            int endValue = mainValue + addValue;
+
+            CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {Owner.Title} (+{endValue}) (+{mainValue}+{procent * 100}% of MaxHP)");
+
+            owner.GiveHP(new HpChangeEventArgs(this, endValue));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ConsoleClient.CardGame.Cards;
+using ConsoleClient.CardGame.Cards.Primitives;
 using ConsoleClient.CardGame.Cards.Warriors;
 using ConsoleClient.CardGame.Scenes;
 
@@ -45,12 +46,13 @@ namespace ConsoleClient.CardGame
             // will get from outside
             Card[] tempFriend =
             {
-                new Knight(Scenes[CurrentSceneId])
+                new Knight(Scenes[CurrentSceneId], 0, CardTag.Friend),
+                new Paladin(Scenes[CurrentSceneId], 1, CardTag.Friend)
             };
 
             Card[] tempEnemy =
             {
-                new Necromant(Scenes[CurrentSceneId])
+                new Necromant(Scenes[CurrentSceneId], 0, CardTag.Enemy)
             };
 
             Scenes[CurrentSceneId].Start(tempFriend, tempEnemy);
@@ -59,7 +61,7 @@ namespace ConsoleClient.CardGame
 
         public static void WriteLog(string message)
         {
-            System.Console.WriteLine(message);
+            Console.WriteLine(message);
             System.Diagnostics.Debug.WriteLine(message);
         }
     }    
