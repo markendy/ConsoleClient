@@ -33,10 +33,12 @@ namespace ConsoleClient.CardGame.Skills.Damage
 
             double procent = 0.3;            
             _oldDamage = owner.CurrentDamage;
-            int addValue = (int)(_oldDamage * procent);
-            owner.AdditionalDamage += addValue;
+            int addValue = (int)(_oldDamage * procent);            
 
-            CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> {Owner.Title} ({_oldDamage}+{addValue}) ({procent * 100}% of BaseDamage)");
+            CardGameEngine.WriteLog(LogTag.skill, 
+                $"{Owner.Title}::{Title}> {Owner.Title} ({_oldDamage}+{addValue}) ({procent * 100}% of BaseDamage)");
+
+            owner.AdditionalDamage += addValue;
         }
     }
 }

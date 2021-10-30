@@ -31,21 +31,21 @@ namespace ConsoleClient.CardGame.Skills.Heals
 
             FindIdWithMinHP(battleScene, ref minHPCardId, CardTag.Friend);
 
-            ILiveCard friend = battleScene.GetCard(minHPCardId, Owner.Tag) as ILiveCard;
-            
-            if (friend is null)
+
+            if (battleScene.GetCard(minHPCardId, Owner.Tag) is not ILiveCard friend)
                 return;
-            
+
             CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> " +
                 $"{(friend as IDescribed).Title} (+{endValue}) (+{mainValue}+{procent * 100}% of MaxHP)");
             friend.GiveHP(new HpChangeEventArgs(this, endValue));
 
+            //  === === ===
+
             FindIdWithMinHP(battleScene, ref minHPCardId, CardTag.Enemy);
-            ILiveCard enemy = battleScene.GetCard(minHPCardId, Owner.EnemyTag) as ILiveCard;
-            
-            if (enemy is null)
+
+            if (battleScene.GetCard(minHPCardId, Owner.EnemyTag) is not ILiveCard enemy)
                 return;
-            
+
             CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> " +
                 $"{(enemy as IDescribed).Title} (-{endValue}) (-{mainValue}+{procent * 100}% of MaxHP)");
             enemy.TakeHP(new HpChangeEventArgs(this, endValue));

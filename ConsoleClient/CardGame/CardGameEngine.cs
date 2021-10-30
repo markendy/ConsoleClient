@@ -56,9 +56,6 @@ namespace ConsoleClient.CardGame
                 new Necromant(Scenes[CurrentSceneId], 0, CardTag.Enemy)
             };
 
-            BaseSettings.EngineSettings.LogFilter.Add(LogTag.skill);
-            BaseSettings.EngineSettings.LogFilter.Add(LogTag.empty);
-
             Scenes[CurrentSceneId].Start(tempFriend, tempEnemy);
         }
 
