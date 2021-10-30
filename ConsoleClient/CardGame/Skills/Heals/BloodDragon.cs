@@ -21,7 +21,7 @@ namespace ConsoleClient.CardGame.Skills.Heals
             ILiveCard owner = Owner as ILiveCard;
             owner.HP += (int)(owner.MaxHP * procent);
 
-            CardGameEngine.WriteLog($"[skill] Card {Owner.Title} executed skill {Title}: {Owner.Title} regen on +{(int)(owner.MaxHP * procent)} ({procent * 100}% of MaxHP)");
+            CardGameEngine.WriteLog($"[skill] {Owner.Title} executed {Title}: {Owner.Title} regen (+{(int)(owner.MaxHP * procent)}) ({procent * 100}% of MaxHP)");
         }
     }
 }

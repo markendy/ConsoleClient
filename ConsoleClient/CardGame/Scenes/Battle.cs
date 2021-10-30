@@ -57,7 +57,7 @@ namespace ConsoleClient.CardGame.Scenes
                 {
                     IsEndGame = true;
                     int od = ExecuteCards[0] is null ? 1 : 0;
-                    CardGameEngine.WriteLog($"Game end! Won {ExecuteCards[od].Title}");
+                    CardGameEngine.WriteLog($"===========\nGame end! Won {ExecuteCards[od].Title}");
                 }
 
                 ++CurrentStep;
