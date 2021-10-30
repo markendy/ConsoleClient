@@ -1,6 +1,8 @@
 ﻿using ConsoleClient.CardGame.Cards;
 using ConsoleClient.CardGame.Cards.Primitives;
+using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
+using System;
 
 
 namespace ConsoleClient.CardGame.Skills.Damage
@@ -15,7 +17,7 @@ namespace ConsoleClient.CardGame.Skills.Damage
 
 
         /// <summary>
-        /// Sadist damage all enemy in 35% of HP
+        /// Sadist give self hp all enemy 15% of MaxHP
         /// </summary>        
         public override void Execute()
         {
@@ -24,15 +26,20 @@ namespace ConsoleClient.CardGame.Skills.Damage
                 if (target is null)
                     continue;
 
-                double procent = 0.35;
+                double procent = 0.15;
                 
                 int addValue = (int)(target.HP * procent);
-                CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {target.Title} ({target.HP}-{addValue}) ({procent * 100}% of CurrentHP)");
+                double miniProcent = Math.Round(procent * 0.75, 2);
+                int miniAddValue = (int)(target.HP * miniProcent);
+
+                CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> " +
+                    $"{target.Title} ({target.HP}-{addValue}) ({procent * 100}% of CurrentHP)");
                 target.TakeHP(new HpChangeEventArgs(this, addValue));
-                
+
                 var owner = (Owner as Warrior);                              
-                CardGameEngine.WriteLog($"and {owner.Title} ({owner.HP}+{addValue}) ({procent * 100}% of CurrentHP enemy)");
-                owner.GiveHP(new HpChangeEventArgs(this, addValue));                
+                CardGameEngine.WriteLog(LogTag.empty, 
+                    $"and {owner.Title} ({owner.HP}+{miniAddValue}) ({miniProcent * 100}% of CurrentHP enemy)");
+                owner.GiveHP(new HpChangeEventArgs(this, miniAddValue));                
             }            
         }
     }

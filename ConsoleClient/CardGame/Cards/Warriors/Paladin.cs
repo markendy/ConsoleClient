@@ -1,4 +1,5 @@
 ﻿using ConsoleClient.CardGame.Cards.Primitives;
+using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
 using ConsoleClient.CardGame.Skills.Heals;
 
@@ -12,9 +13,8 @@ namespace ConsoleClient.CardGame.Cards.Warriors
             MaxHP = 2200;
             GiveHP(new HpChangeEventArgs(MaxHP));
             BaseDamage = 150;
-            Title = $"{nameof(Paladin)}";
 
-            CardGameEngine.WriteLog($"Card {Title} created with hp:{HP}, dmg: {CurrentDamage}");
+            AfterForChildCreate();
         }
 
 

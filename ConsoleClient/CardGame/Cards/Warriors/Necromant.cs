@@ -1,4 +1,5 @@
 ﻿using ConsoleClient.CardGame.Cards.Primitives;
+using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
 using ConsoleClient.CardGame.Skills.Damage;
 
@@ -12,9 +13,8 @@ namespace ConsoleClient.CardGame.Cards.Warriors
             MaxHP = 1240;
             GiveHP(new HpChangeEventArgs(MaxHP));
             BaseDamage = 275;
-            Title = $"{nameof(Necromant)}";
 
-            CardGameEngine.WriteLog($"Card {Title} created with hp:{HP}, dmg: {CurrentDamage}");
+            AfterForChildCreate();
         }
 
 

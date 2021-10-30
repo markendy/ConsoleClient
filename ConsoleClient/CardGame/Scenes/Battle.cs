@@ -1,5 +1,6 @@
 ﻿using ConsoleClient.CardGame.Cards;
 using ConsoleClient.CardGame.Cards.Primitives;
+using ConsoleClient.CardGame.Common.Primitives;
 using System.Collections.Generic;
 
 
@@ -70,7 +71,7 @@ namespace ConsoleClient.CardGame.Scenes
         }
 
 
-        public Card GetTargetForCard(int needInBoardCardId, CardTag needTag)
+        public Card GetCard(int needInBoardCardId, CardTag needTag)
         {
             Card[] tempCards = null;
 

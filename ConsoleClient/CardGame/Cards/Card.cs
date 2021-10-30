@@ -49,7 +49,7 @@ namespace ConsoleClient.CardGame.Cards
 
         public virtual void MakeStep()
         {
-            CardGameEngine.WriteLog($"___________________________________________\n\tCard {Title} make step\n___________________________________________");
+            CardGameEngine.WriteLog($"___________________________________________\n\tCard [{Tag}]{Title} make step\n___________________________________________");
 
             ExecuteSkills();            
             if (Type == CardType.Warrior)            

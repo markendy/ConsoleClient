@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ConsoleClient.CardGame.Cards;
 using ConsoleClient.CardGame.Cards.Primitives;
 using ConsoleClient.CardGame.Cards.Warriors;
+using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
 
 
@@ -55,7 +56,27 @@ namespace ConsoleClient.CardGame
                 new Necromant(Scenes[CurrentSceneId], 0, CardTag.Enemy)
             };
 
+            BaseSettings.EngineSettings.LogFilter.Add(LogTag.skill);
+
             Scenes[CurrentSceneId].Start(tempFriend, tempEnemy);
+        }
+
+
+        public static void WriteLog(LogTag logTag, string message)
+        {
+            if (BaseSettings.EngineSettings.LogFilter.Count == 0)
+            {
+                WriteLog(message, logTag);
+
+                return;
+            }
+
+            if (BaseSettings.EngineSettings.LogFilter.Contains(logTag))
+            {
+                WriteLog(message, logTag);
+
+                return;
+            }
         }
 
 
@@ -63,6 +84,16 @@ namespace ConsoleClient.CardGame
         {
             Console.WriteLine(message);
             System.Diagnostics.Debug.WriteLine(message);
+        }
+
+
+        private static void WriteLog(string message, LogTag logTag)
+        {
+            if (logTag == LogTag.empty)
+                WriteLog(message);
+
+            Console.WriteLine($"[{logTag}]" + " " + message);
+            System.Diagnostics.Debug.WriteLine($"[{logTag}]" + " " + message);
         }
     }    
 }

@@ -1,7 +1,7 @@
 ﻿using ConsoleClient.CardGame.Cards;
 using ConsoleClient.CardGame.Cards.Interfaces;
 using ConsoleClient.CardGame.Cards.Primitives;
-
+using ConsoleClient.CardGame.Common.Primitives;
 
 namespace ConsoleClient.CardGame.Skills.Heals
 {
@@ -23,7 +23,7 @@ namespace ConsoleClient.CardGame.Skills.Heals
             ILiveCard owner = Owner as ILiveCard;
             int addValue = (int)(owner.MaxHP * procent);
             
-            CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {Owner.Title} (+{addValue}) ({procent * 100}% of MaxHP)");
+            CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> {Owner.Title} (+{addValue}) ({procent * 100}% of MaxHP)");
             
             owner.GiveHP(new HpChangeEventArgs(this, addValue));
         }

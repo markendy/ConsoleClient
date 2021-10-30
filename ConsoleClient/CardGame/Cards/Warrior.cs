@@ -4,7 +4,6 @@ using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
 using ConsoleClient.CardGame.Skills;
 using System;
-using System.ComponentModel;
 
 
 namespace ConsoleClient.CardGame.Cards
@@ -16,12 +15,12 @@ namespace ConsoleClient.CardGame.Cards
         private int _additionalDamage;
         private int _baseDamage = BaseSettings.GameSettings.BaseDamage;
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public Warrior(Scene scene, int inBoardId, CardTag cardTag) : base(scene, inBoardId, CardType.Warrior, cardTag)
         {
             MaxSkillCount = 3;
             Skills = new BaseSkill[MaxSkillCount];
+            Title = $"{this.GetType().Name}";
 
             LoadSkills();
         }
@@ -52,7 +51,7 @@ namespace ConsoleClient.CardGame.Cards
                 _hp = currentValue;
 
                 if (Title != Warrior.NullCardTitle)
-                    CardGameEngine.WriteLog($"[HP] {Title}[HP] = {HP}/{MaxHP}");                
+                    CardGameEngine.WriteLog(LogTag.HP, $"{Title}[HP] = {HP}/{MaxHP}");                
             }
         }
 
@@ -80,11 +79,20 @@ namespace ConsoleClient.CardGame.Cards
         public int CurrentDamage => BaseDamage + AdditionalDamage;
 
 
+        public void AfterForChildCreate()
+        {
+            CardGameEngine.WriteLog(LogTag.empty, $"Card {Title} created with hp:{HP}, dmg: {CurrentDamage}");
+        }
+
+
         protected override void Attack()
         {
             Battle battleScence = CurrentScene as Battle;
             double error = 0.25;
-            ILiveCard target = battleScence.GetTargetForCard(InBoardId, EnemyTag) as ILiveCard;
+            ILiveCard target = battleScence.GetCard(InBoardId, EnemyTag) as ILiveCard;
+
+            if (target is null)
+                return;
 
             target.TakeHP(new HpChangeEventArgs(this, 
                 CardGameEngine.Random.Next((int)(CurrentDamage * (1 - error)), (int)(CurrentDamage * (1 + error)))));
@@ -98,7 +106,7 @@ namespace ConsoleClient.CardGame.Cards
 
             if (Title != Warrior.NullCardTitle && sender is not null)
             {
-                CardGameEngine.WriteLog($"[damage] {sender.InnerTitle} -dmg-> {Title} ({HP}-{args.Value})");
+                CardGameEngine.WriteLog(LogTag.damage, $"{sender.InnerTitle} -dmg-> {Title} ({HP}-{args.Value})");
             }            
 
             SetHP(new HpChangeEventArgs(args.Sender, value));
@@ -112,7 +120,7 @@ namespace ConsoleClient.CardGame.Cards
 
             if (Title != Warrior.NullCardTitle && sender is not null)
             {
-                CardGameEngine.WriteLog($"[regen] {sender.InnerTitle} -rgn-> {Title} ({HP}+{args.Value})");
+                CardGameEngine.WriteLog(LogTag.regen, $"{sender.InnerTitle} -rgn-> {Title} ({HP}+{args.Value})");
             }
             
             SetHP(new HpChangeEventArgs(args.Sender, value));
@@ -126,7 +134,7 @@ namespace ConsoleClient.CardGame.Cards
                 IsLive = false;
 
                 IDescribed sender = args.Sender as IDescribed;
-                CardGameEngine.WriteLog($"[death] {sender.InnerTitle} -kill-> {Title}");
+                CardGameEngine.WriteLog(LogTag.death, $"{sender.InnerTitle} -kill-> {Title}");
 
                 (CurrentScene as Battle).RemoveCardFromCardList(InBoardId, Tag);
             }

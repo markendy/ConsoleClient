@@ -1,5 +1,6 @@
 ﻿using ConsoleClient.CardGame.Cards;
 using ConsoleClient.CardGame.Cards.Interfaces;
+using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
 
 
@@ -17,6 +18,7 @@ namespace ConsoleClient.CardGame.Skills.Damage
 
 
         /// <summary>
+        /// Combat experience allows you to improve your fighting style on the go
         /// Add damage on step % 2 = 0 on 30%
         /// </summary>        
         public override void Execute()
@@ -34,7 +36,7 @@ namespace ConsoleClient.CardGame.Skills.Damage
             int addValue = (int)(_oldDamage * procent);
             owner.AdditionalDamage += addValue;
 
-            CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {Owner.Title} ({_oldDamage}+{addValue}) ({procent * 100}% of BaseDamage)");
+            CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> {Owner.Title} ({_oldDamage}+{addValue}) ({procent * 100}% of BaseDamage)");
         }
     }
 }

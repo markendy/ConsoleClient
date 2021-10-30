@@ -15,6 +15,11 @@ namespace ConsoleClient.CardGame.Cards.Interfaces
         public int CurrentDamage { get; }
 
 
+        public virtual void AfterCreate()
+        {
+
+        }
+
 
         public void TakeHP(HpChangeEventArgs args);
 
