@@ -40,7 +40,7 @@ namespace ConsoleClient.CardGame.Cards
 
         public virtual void MakeStep()
         {
-            CardGameEngine.WriteLog($"Card {Title} make step");
+            CardGameEngine.WriteLog($"___________________________________________\n\tCard {Title} make step\n___________________________________________");
 
             if (Type == CardType.Warrior)            
                 GiveDamage();

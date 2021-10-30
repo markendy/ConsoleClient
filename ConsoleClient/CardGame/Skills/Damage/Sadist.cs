@@ -26,11 +26,11 @@ namespace ConsoleClient.CardGame.Skills.Damage
                 double procent = 0.35;
 
                 target.HP -= (int)(target.HP * procent);
-                CardGameEngine.WriteLog($"[skill] {Owner.Title} executed {Title}: {target.Title} was -dmg- (-{(int)(target.HP * procent)}) ({procent * 100}% of CurrentHP)");
+                CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {target.Title} (-{(int)(target.HP * procent)}) ({procent * 100}% of CurrentHP)");
                 
                 var owner = (Owner as Warrior);
                 owner.HP += (int)(target.HP * procent);                
-                CardGameEngine.WriteLog($"and {target.Title} give this hp self: (+{(int)(target.HP * 0.35)}) (35% of CurrentHP enemy)");
+                CardGameEngine.WriteLog($"and {target.Title} (+{(int)(target.HP * 0.35)}) (35% of CurrentHP enemy)");
             }            
         }
     }
