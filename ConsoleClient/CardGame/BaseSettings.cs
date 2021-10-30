@@ -1,6 +1,7 @@
 ﻿using ConsoleClient.CardGame.Common.Primitives;
 using System.Collections.Generic;
 
+
 namespace ConsoleClient.CardGame
 {
     public static class BaseSettings

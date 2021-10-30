@@ -35,10 +35,12 @@ namespace ConsoleClient.CardGame.Skills.Damage
                 CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> " +
                     $"{target.Title} ({target.HP}-{addValue}) ({procent * 100}% of CurrentHP)");
                 target.TakeHP(new HpChangeEventArgs(this, addValue));
+                target.MaxHP -= (int)(addValue * 0.25);
 
                 var owner = (Owner as Warrior);                              
                 CardGameEngine.WriteLog(LogTag.empty, 
                     $"and {owner.Title} ({owner.HP}+{miniAddValue}) ({miniProcent * 100}% of CurrentHP enemy)");
+                owner.MaxHP += (int)(miniAddValue * 0.5);
                 owner.GiveHP(new HpChangeEventArgs(this, miniAddValue));                
             }            
         }

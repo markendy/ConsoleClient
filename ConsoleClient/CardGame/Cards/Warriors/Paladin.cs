@@ -1,5 +1,4 @@
 ﻿using ConsoleClient.CardGame.Cards.Primitives;
-using ConsoleClient.CardGame.Common.Primitives;
 using ConsoleClient.CardGame.Scenes;
 using ConsoleClient.CardGame.Skills.Heals;
 
