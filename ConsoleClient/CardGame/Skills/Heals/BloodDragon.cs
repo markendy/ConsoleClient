@@ -1,6 +1,7 @@
 ﻿using ConsoleClient.CardGame.Cards;
 using ConsoleClient.CardGame.Cards.Interfaces;
 
+
 namespace ConsoleClient.CardGame.Skills.Heals
 {
     public class BloodDragon : BaseSkill

@@ -3,7 +3,7 @@ using ConsoleClient.CardGame.Cards.Warriors;
 using ConsoleClient.CardGame.Scenes;
 using ConsoleClient.CardGame.Skills;
 using System;
-using System.Linq;
+
 
 namespace ConsoleClient.CardGame.Cards
 {
