@@ -91,7 +91,10 @@ namespace ConsoleClient.CardGame
         private static void WriteLog(string message, LogTag logTag)
         {
             if (logTag == LogTag.empty)
+            {
                 WriteLog(message);
+                return;
+            }
 
             Console.WriteLine($"[{logTag}]" + " " + message);
             System.Diagnostics.Debug.WriteLine($"[{logTag}]" + " " + message);
