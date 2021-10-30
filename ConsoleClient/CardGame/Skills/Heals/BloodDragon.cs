@@ -17,8 +17,11 @@ namespace ConsoleClient.CardGame.Skills.Heals
         /// </summary>
         public override void Execute()
         {
+            double procent = 0.13;
             ILiveCard owner = Owner as ILiveCard;
-            owner.HP += (int)(owner.MaxHP * 0.15);
+            owner.HP += (int)(owner.MaxHP * procent);
+
+            CardGameEngine.WriteLog($"[skill] Card {Owner.Title} executed skill {Title}: {Owner.Title} regen on +{(int)(owner.MaxHP * procent)} ({procent * 100}% of MaxHP)");
         }
     }
 }

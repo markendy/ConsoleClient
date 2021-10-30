@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using ConsoleClient.CardGame.Cards;
+using ConsoleClient.CardGame.Cards.Warriors;
 using ConsoleClient.CardGame.Scenes;
 
 
@@ -6,13 +9,18 @@ namespace ConsoleClient.CardGame
 {
     public class CardGameEngine
     {
+        public static Random Random { get; } = new Random();
+
         public CardGameEngine()
-        { }
+        {
+            Scenes.Add(new Battle());
+        }
 
 
         public int CurrentSceneId { get; set; }
 
-        public List<Scene>Scenes { get; set; }
+        public List<Scene> Scenes { get; } = new List<Scene>();
+
 
 
 
@@ -24,9 +32,35 @@ namespace ConsoleClient.CardGame
 
         public void LoadScene(int id)
         {
-            CurrentSceneId = id;
+            WriteLog("Start scene");
 
-            Scenes[CurrentSceneId].Start();
+            CurrentSceneId = id;                       
+
+            if (Scenes?[CurrentSceneId] is null)
+            {
+                WriteLog($"Loading scene {CurrentSceneId} is null");
+                return;
+            }
+
+            // will get from outside
+            Card[] tempFriend =
+            {
+                new Knight(Scenes[CurrentSceneId])
+            };
+
+            Card[] tempEnemy =
+            {
+                new Necromant(Scenes[CurrentSceneId])
+            };
+
+            Scenes[CurrentSceneId].Start(tempFriend, tempEnemy);
+        }
+
+
+        public static void WriteLog(string message)
+        {
+            System.Console.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(message);
         }
     }    
 }

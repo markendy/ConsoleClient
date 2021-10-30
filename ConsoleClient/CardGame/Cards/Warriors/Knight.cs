@@ -8,7 +8,7 @@ namespace ConsoleClient.CardGame.Cards.Warriors
     {
         public Knight(Scene scene) : base (scene)
         {
-            MaxHP = 350;
+            MaxHP = 250;
             HP = MaxHP;
             Damage = 45;
             Title = $"{nameof(Knight)}";

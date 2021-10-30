@@ -56,9 +56,7 @@ namespace ConsoleClient.CardGame.Cards
                 if (skill is null)
                     continue;
 
-                skill.Execute();
-                
-                CardGameEngine.WriteLog($"Card {Title} execute skill {skill.Title}");
+                skill.Execute();                               
             }
         }
 

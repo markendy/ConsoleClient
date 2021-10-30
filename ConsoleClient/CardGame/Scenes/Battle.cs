@@ -47,7 +47,7 @@ namespace ConsoleClient.CardGame.Scenes
 
             while (!IsEndGame)
             {
-                CardGameEngine.WriteLog($"Step {CurrentStep}");
+                CardGameEngine.WriteLog($"===========\nStep {CurrentStep}");
                 for (int i = 0; i < ExecuteCards.Count; ++i)
                 {
                     ExecuteCards[i]?.MakeStep();                                        

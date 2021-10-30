@@ -50,18 +50,18 @@ namespace ConsoleClient.CardGame.Cards
                     if (_hp > value)
                     {
                         var ans = this is Necromant ? (CurrentScene as Battle).FriendCards[InBoardId].Title : (CurrentScene as Battle).EnemyCards[InBoardId].Title;
-                        CardGameEngine.WriteLog($"Card {Title} damage by {ans} on {_hp - value}");
+                        CardGameEngine.WriteLog($"[damage] {ans} -dmg-> {Title} (-{_hp - value})");
                     }
                     else if (_hp < value)
                     {
-                        CardGameEngine.WriteLog($"[regen] Card {Title} regen on {value - _hp}");
+                        CardGameEngine.WriteLog($"[regen] {Title} (+{value - _hp})");
                     }
                 }
                 
                 _hp = value;
 
                 if (Title != Warrior.NullCardTitle)
-                    CardGameEngine.WriteLog($"[HP] Card {Title} has {_hp} hp");                
+                    CardGameEngine.WriteLog($"[HP] {Title}[HP] = {_hp}");                
             }
         }
 
@@ -81,7 +81,7 @@ namespace ConsoleClient.CardGame.Cards
             
             ILiveCard target = (this is Necromant ? (CurrentScene as Battle).FriendCards[InBoardId] : (CurrentScene as Battle).EnemyCards[InBoardId]) as ILiveCard;
 
-            target.HP -= Damage;            
+            target.HP -= CardGameEngine.Random.Next((int)(Damage * 0.75), (int)(Damage * 1.25));            
         }
     }
 }
