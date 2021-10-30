@@ -14,7 +14,7 @@ namespace ConsoleClient.CardGame.Skills.Heals
 
 
         /// <summary>
-        /// Head hero in every step
+        /// Head hero in every step on 13%
         /// </summary>
         public override void Execute()
         {
