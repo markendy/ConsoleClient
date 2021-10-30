@@ -43,6 +43,9 @@ namespace ConsoleClient.CardGame.Cards
                     var ans = this is not Necromant ? (CurrentScene as Battle).FriendCards : (CurrentScene as Battle).EnemyCards;
                     int od = this is Necromant ? 1 : 0;
                     ans[InBoardId] = (CurrentScene as Battle).AllCards[od] = (CurrentScene as Battle).ExecuteCards[od] = null;
+                    CardGameEngine.WriteLog($"[death] {Title} was kill ({_hp}-{_hp - value})");
+
+                    return;
                 }
 
                 if (Title != Warrior.NullCardTitle)

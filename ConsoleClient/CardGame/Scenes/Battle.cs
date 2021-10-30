@@ -49,7 +49,11 @@ namespace ConsoleClient.CardGame.Scenes
                 CardGameEngine.WriteLog($"\n\n===========================================\nStep {CurrentStep}");
                 for (int i = 0; i < ExecuteCards.Count; ++i)
                 {
-                    ExecuteCards[i]?.MakeStep();                                        
+                    if (ExecuteCards[i] is not null)
+                    {
+                        ExecuteCards[i].MakeStep();
+                        CardGameEngine.WriteLog($"-------------------------------------------\n");
+                    }
                 }
 
                 if (friendCards[0] is null || enemyCards[0] is null)
