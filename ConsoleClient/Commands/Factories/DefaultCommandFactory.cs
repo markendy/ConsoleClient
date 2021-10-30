@@ -18,7 +18,8 @@ namespace ConsoleClient.Commands.Factories
             AllCommand.Add(new Command("exit", ExitExecuteAction));
             AllCommand.Add(new Command("version", GetVersionExecuteAction));
             AllCommand.Add(new Command("help", HelpExecuteAction));
-            AllCommand.Add(new Command("help", HelpExecuteAction, 1));
+            AllCommand.Add(new Command("help", HelpExecuteAction, 1));            
+            AllCommand.Add(new Command("start_card_game", StartCardGame));
 
             Command get = new Command("get");
             {
@@ -37,6 +38,13 @@ namespace ConsoleClient.Commands.Factories
         private void ClearExecuteAction()
         {
             Console.Clear();
+        }
+
+
+        private void StartCardGame()
+        {
+            var game = new CardGame.CardGameEngine();
+            game.Start();
         }
 
 
