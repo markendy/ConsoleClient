@@ -57,6 +57,7 @@ namespace ConsoleClient.CardGame
             };
 
             BaseSettings.EngineSettings.LogFilter.Add(LogTag.skill);
+            BaseSettings.EngineSettings.LogFilter.Add(LogTag.empty);
 
             Scenes[CurrentSceneId].Start(tempFriend, tempEnemy);
         }
