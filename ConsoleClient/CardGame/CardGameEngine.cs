@@ -48,12 +48,15 @@ namespace ConsoleClient.CardGame
             Card[] tempFriend =
             {
                 new Knight(Scenes[CurrentSceneId], 0, CardTag.Friend),
-                new Paladin(Scenes[CurrentSceneId], 1, CardTag.Friend)
+                new Knight(Scenes[CurrentSceneId], 1, CardTag.Friend),
+                new Paladin(Scenes[CurrentSceneId], 2, CardTag.Friend)
             };
 
             Card[] tempEnemy =
             {
-                new Necromant(Scenes[CurrentSceneId], 0, CardTag.Enemy)
+                new Necromant(Scenes[CurrentSceneId], 0, CardTag.Enemy),
+                new Paladin(Scenes[CurrentSceneId], 1, CardTag.Enemy),
+                new Paladin(Scenes[CurrentSceneId], 2, CardTag.Enemy)
             };
 
             Scenes[CurrentSceneId].Start(tempFriend, tempEnemy);
