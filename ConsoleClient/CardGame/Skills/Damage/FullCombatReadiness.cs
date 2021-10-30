@@ -32,7 +32,7 @@ namespace ConsoleClient.CardGame.Skills.Damage
             }
 
             double procent = 0.3;            
-            _oldDamage = owner.BaseDamage;
+            _oldDamage = owner.CurrentDamage;
             int addValue = (int)(_oldDamage * procent);
             owner.AdditionalDamage += addValue;
 
