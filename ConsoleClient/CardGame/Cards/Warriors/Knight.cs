@@ -1,4 +1,5 @@
 ﻿using ConsoleClient.CardGame.Scenes;
+using ConsoleClient.CardGame.Skills.Damage;
 using ConsoleClient.CardGame.Skills.Heals;
 
 
@@ -8,9 +9,9 @@ namespace ConsoleClient.CardGame.Cards.Warriors
     {
         public Knight(Scene scene) : base (scene)
         {
-            MaxHP = 250;
+            MaxHP = 1750;
             HP = MaxHP;
-            Damage = 45;
+            Damage = 250;
             Title = $"{nameof(Knight)}";
 
             CardGameEngine.WriteLog($"Card {Title} created with hp:{HP}, dmg: {Damage}");
@@ -21,6 +22,7 @@ namespace ConsoleClient.CardGame.Cards.Warriors
         protected override void LoadSkills()
         {
             Skills[0] = new BloodDragon(this);
+            Skills[1] = new FullCombatReadiness(this);
         }
     }
 }

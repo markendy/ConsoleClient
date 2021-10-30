@@ -20,9 +20,11 @@ namespace ConsoleClient.CardGame.Skills.Heals
         {
             double procent = 0.2;
             ILiveCard owner = Owner as ILiveCard;
-            owner.HP += (int)(owner.MaxHP * procent);
-
-            CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {Owner.Title} (+{(int)(owner.MaxHP * procent)}) ({procent * 100}% of MaxHP)");
+            int addValue = (int)(owner.MaxHP * procent);
+            
+            CardGameEngine.WriteLog($"[skill] {Owner.Title}::{Title}> {Owner.Title} (+{addValue}) ({procent * 100}% of MaxHP)");
+            
+            owner.HP += addValue;
         }
     }
 }

@@ -8,9 +8,9 @@ namespace ConsoleClient.CardGame.Cards.Warriors
     {
         public Necromant(Scene scene) : base(scene)
         {
-            MaxHP = 150;
+            MaxHP = 1240;
             HP = MaxHP;
-            Damage = 50;
+            Damage = 275;
             Title = $"{nameof(Necromant)}";
 
             CardGameEngine.WriteLog($"Card {Title} created with hp:{HP}, dmg: {Damage}");
