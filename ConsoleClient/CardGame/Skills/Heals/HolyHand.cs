@@ -9,10 +9,8 @@ namespace ConsoleClient.CardGame.Skills.Heals
 {
     public class HolyHand : BaseSkill
     {
-        public HolyHand(Card owner)
+        public HolyHand(Card owner) : base(owner)
         {
-            Owner = owner;
-            Title = nameof(HolyHand);
         }
 
 

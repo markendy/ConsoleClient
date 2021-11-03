@@ -9,10 +9,8 @@ namespace ConsoleClient.CardGame.Skills.Damage
 {
     public class Sadist : BaseSkill
     {
-        public Sadist(Card owner)
+        public Sadist(Card owner) : base(owner)
         {
-            Owner = owner;
-            Title = nameof(Sadist);
         }
 
 

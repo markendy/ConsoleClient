@@ -10,7 +10,6 @@ namespace ConsoleClient.CardGame.Cards.Warriors
         public Paladin(Scene scene, int inBoardId, CardTag cardTag) : base (scene, inBoardId, cardTag)
         {
             MaxHP = 2200;
-            GiveHP(new HpChangeEventArgs(MaxHP));
             BaseDamage = 150;
 
             AfterForChildCreate();

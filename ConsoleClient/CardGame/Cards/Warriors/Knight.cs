@@ -11,7 +11,6 @@ namespace ConsoleClient.CardGame.Cards.Warriors
         public Knight(Scene scene, int inBoardId, CardTag cardTag) : base (scene, inBoardId, cardTag)
         {
             MaxHP = 1550;
-            GiveHP(new HpChangeEventArgs(MaxHP));
             BaseDamage = 250;
 
             AfterForChildCreate();

@@ -9,6 +9,13 @@ namespace ConsoleClient.CardGame.Skills
         public const string NullSkillTitle = "NULL SKILL TITLE";
 
 
+        public BaseSkill(Card owner)
+        {
+            Owner = owner;
+            Title = GetType().Name;
+        }
+
+
         public int Id { get; set; }
 
         public string Title { get; set; } = NullSkillTitle;

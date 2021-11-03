@@ -8,10 +8,8 @@ namespace ConsoleClient.CardGame.Skills.Heals
 {
     public class BloodDragon : BaseSkill
     {
-        public BloodDragon(Card owner)
+        public BloodDragon(Card owner) : base(owner)
         {
-            Owner = owner;
-            Title = nameof(BloodDragon);
         }
 
 

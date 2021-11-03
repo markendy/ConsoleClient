@@ -4,7 +4,9 @@
     {     
         public static void Main(string[] args)
         {
-            CommandLineHandler.Start();
+            //CommandLineHandler.Start();
+            CardGame.CardGameEngine game = new CardGame.CardGameEngine();
+            game.Start();
         }
     }
 }

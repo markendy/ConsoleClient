@@ -20,10 +20,28 @@ namespace ConsoleClient.CardGame.Cards
         {
             MaxSkillCount = 3;
             Skills = new BaseSkill[MaxSkillCount];
-            Title = $"{this.GetType().Name}";
+            Title = $"{GetType().Name}";
 
             LoadSkills();
         }
+
+
+        public EventHandler<HpChangeEventArgs> BeforeHpChanged { get; set; }
+
+        public EventHandler<HpChangeEventArgs> AfterHpChanged { get; set; }
+
+        public EventHandler<HpChangeEventArgs> BeforeHpTaked { get; set; }
+
+        public EventHandler<HpChangeEventArgs> AfterHpTaked { get; set; }
+
+        public EventHandler<HpChangeEventArgs> BeforeHpGived { get; set; }
+
+        public EventHandler<HpChangeEventArgs> AfterHpGived { get; set; }
+
+
+        public double PhysicalResistance { get; set; }
+
+        public double MagicResistance { get; set; }
 
 
         public int MaxHP
@@ -45,13 +63,13 @@ namespace ConsoleClient.CardGame.Cards
         {
             get => _hp;
             private set
-            {
+            {                
                 int currentValue = Math.Max(0, Math.Min(MaxHP, value));
                 
                 _hp = currentValue;
 
                 if (Title != Warrior.NullCardTitle)
-                    CardGameEngine.WriteLog(LogTag.HP, $"{Title}[HP] = {HP}/{MaxHP}");                
+                    CardGameEngine.WriteLog(LogTag.HP, $"{Title}[HP] = {HP}/{MaxHP} (-{Math.Round(PhysicalResistance * 100, 2)}%)");                
             }
         }
 
@@ -81,6 +99,7 @@ namespace ConsoleClient.CardGame.Cards
 
         public void AfterForChildCreate()
         {
+            GiveHP(new HpChangeEventArgs(MaxHP));
             CardGameEngine.WriteLog(LogTag.empty, $"Card {Title} created with hp:{HP}, dmg: {CurrentDamage}");
         }
 
@@ -101,20 +120,27 @@ namespace ConsoleClient.CardGame.Cards
 
         public void TakeHP(HpChangeEventArgs args)
         {
-            int value = HP - args.Value;
+            BeforeHpTaked?.Invoke(args.Sender, args);
+
+            int deltaValue = args.Value - (int)(PhysicalResistance * args.Value);
+            int value = HP - deltaValue;
             IDescribed sender = args.Sender as IDescribed;
 
             if (Title != Warrior.NullCardTitle && sender is not null)
             {
-                CardGameEngine.WriteLog(LogTag.damage, $"{sender.InnerTitle} -dmg-> {Title} ({HP}-{args.Value})");
+                CardGameEngine.WriteLog(LogTag.damage, $"{sender.InnerTitle} -dmg-> {Title} ({HP}-{deltaValue})");
             }            
 
             SetHP(new HpChangeEventArgs(args.Sender, value));
+
+            AfterHpTaked?.Invoke(args.Sender, args);
         }
 
 
         public void GiveHP(HpChangeEventArgs args)
         {
+            BeforeHpGived?.Invoke(args.Sender, args);
+
             int value = HP + args.Value;
             IDescribed sender = args.Sender as IDescribed;
 
@@ -124,11 +150,15 @@ namespace ConsoleClient.CardGame.Cards
             }
             
             SetHP(new HpChangeEventArgs(args.Sender, value));
+
+            AfterHpGived?.Invoke(args.Sender, args);
         }
 
 
         protected void SetHP(HpChangeEventArgs args)
         {
+            BeforeHpChanged?.Invoke(args.Sender, args);
+
             if (args.Value <= 0)            
             {
                 IsLive = false;
@@ -140,6 +170,8 @@ namespace ConsoleClient.CardGame.Cards
             }
             
             HP = args.Value;
+
+            AfterHpChanged?.Invoke(args.Sender, args);
         }
     }
 }

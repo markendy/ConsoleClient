@@ -10,7 +10,6 @@ namespace ConsoleClient.CardGame.Cards.Warriors
         public Necromant(Scene scene, int inBoardId, CardTag cardTag) : base(scene, inBoardId, cardTag)
         {
             MaxHP = 1240;
-            GiveHP(new HpChangeEventArgs(MaxHP));
             BaseDamage = 275;
 
             AfterForChildCreate();
