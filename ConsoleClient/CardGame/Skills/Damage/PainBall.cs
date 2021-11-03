@@ -33,7 +33,7 @@ namespace ConsoleClient.CardGame.Skills.Damage
 
             CardGameEngine.WriteLog(LogTag.skill, $"{Owner.Title}::{Title}> " +
                     $"{(target as IDescribed).Title} ({target.HP}-{_inputDamageSum})");
-            target.TakeHP(new HpChangeEventArgs(this, (int)(_inputDamageSum*0.4)));
+            target.TakeHP(new HpChangeEventArgs(this, _inputDamageSum));
             _inputDamageSum = 0;
         }
 

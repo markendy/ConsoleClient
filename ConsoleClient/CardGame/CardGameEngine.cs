@@ -49,14 +49,15 @@ namespace ConsoleClient.CardGame
             {
                 //new Knight(Scenes[CurrentSceneId], 0, CardTag.Friend),
                 new Berserk(Scenes[CurrentSceneId], 0, CardTag.Friend),
-                //new Paladin(Scenes[CurrentSceneId], 1, CardTag.Friend)
+                new Paladin(Scenes[CurrentSceneId], 1, CardTag.Friend)
             };
 
             Card[] tempEnemy =
             {
-                //new Knight(Scenes[CurrentSceneId], 0, CardTag.Enemy),
-                //new Necromant(Scenes[CurrentSceneId], 0, CardTag.Enemy),
-                new Paladin(Scenes[CurrentSceneId], 0, CardTag.Enemy)
+                new Knight(Scenes[CurrentSceneId], 0, CardTag.Enemy),
+                new Necromant(Scenes[CurrentSceneId], 1, CardTag.Enemy),
+                new Paladin(Scenes[CurrentSceneId], 2, CardTag.Enemy),
+                new Paladin(Scenes[CurrentSceneId], 3, CardTag.Enemy)
             };
 
             //BaseSettings.EngineSettings.LogFilter.Add(LogTag.HP);
